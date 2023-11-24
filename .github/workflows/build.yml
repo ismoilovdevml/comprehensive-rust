@@ -16,16 +16,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Install formatting dependencies
+        run: |
+          sudo apt install gettext yapf3
+
       - name: Install nightly rustfmt
         run: |
           rustup default nightly
           rustup component add rustfmt
 
-      - name: Check Rust formatting
-        run: cargo fmt --all -- --check
+      - name: Check formatting
+        uses: dprint/check@v2.2
+
+      - name: Check for typos
+        uses: crate-ci/typos@v1.16.9
+        with:
+          config: ./.github/typos.toml
 
   cargo:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -62,7 +76,7 @@ jobs:
         uses: ./.github/workflows/setup-rust-cache
 
       - name: Install dependencies
-        run: sudo apt update && sudo apt install gcc-aarch64-linux-gnu
+        run: sudo apt install gcc-aarch64-linux-gnu
 
       - name: Install toolchain
         run: rustup target add ${{ matrix.target }}
@@ -106,7 +120,6 @@ jobs:
         uses: ./.github/workflows/setup-rust-cache
 
       - name: Install Gettext
-        if: matrix.language != 'en'
         run: sudo apt install gettext
 
       - name: Install mdbook
@@ -115,6 +128,12 @@ jobs:
       - name: Test ${{ matrix.language }} translation
         if: matrix.language != 'en'
         run: msgfmt --statistics -o /dev/null po/${{ matrix.language }}.po
+
+      - name: Test extracting English strings
+        if: matrix.language == 'en'
+        run: |
+          MDBOOK_OUTPUT='{"xgettext": {"pot-file": "messages.pot"}}' mdbook build -d po
+          msgfmt -o /dev/null --statistics po/messages.pot
 
       - name: Build course
         run: mdbook build

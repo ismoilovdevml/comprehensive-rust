@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-(function() {
+(function () {
   let notes = document.querySelector("details");
   // Create an unattached DOM node for the code below.
   if (!notes) {
@@ -32,7 +32,7 @@
 
   // Update the window. This shows/hides controls as necessary for regular and
   // speaker note pages.
-  function applyState()  {
+  function applyState() {
     if (window.location.hash == "#speaker-notes-open") {
       if (getState() != "popup") {
         markDefunct();
@@ -115,10 +115,19 @@
       if (popup) {
         setState("popup");
         applyState();
+        // bind the popup to reset the speaker note state on close of the popup
+        popup.onload = () => {
+          popup.onbeforeunload = () => {
+            setState("inline-open");
+            applyState();
+          };
+        };
       } else {
-        window.alert("Could not open popup, please check your popup blocker settings.");
+        window.alert(
+          "Could not open popup, please check your popup blocker settings."
+        );
       }
-    })
+    });
     let popOutIcon = document.createElement("i");
     popOutIcon.classList.add("fa", "fa-external-link");
     popOut.append(popOutIcon);
@@ -179,9 +188,11 @@
     }
 
     // Update prev/next buttons to keep speaker note state.
-    document.querySelectorAll('a[rel="prev"], a[rel="next"]').forEach((elem) => {
-      elem.href += "#speaker-notes-open";
-    });
+    document
+      .querySelectorAll('a[rel="prev"], a[rel="next"]')
+      .forEach((elem) => {
+        elem.href += "#speaker-notes-open";
+      });
   }
 
   let timeout = null;
@@ -230,7 +241,7 @@
       markDefunct();
       break;
     default:
-      if (window.location.pathname == "/print.html") {
+      if (window.location.pathname.endsWith("/print.html")) {
         setupPrintPage();
         return;
       }

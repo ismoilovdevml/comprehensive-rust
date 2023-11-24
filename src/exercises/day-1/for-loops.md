@@ -8,6 +8,7 @@ let array = [10, 20, 30];
 
 You can print such an array by asking for its debug representation with `{:?}`:
 
+<!-- mdbook-xgettext: skip -->
 ```rust,editable
 fn main() {
     let array = [10, 20, 30];
@@ -22,7 +23,7 @@ keyword:
 fn main() {
     let array = [10, 20, 30];
     print!("Iterating over array:");
-    for n in array {
+    for n in &array {
         print!(" {n}");
     }
     println!();
@@ -38,6 +39,7 @@ fn main() {
 Use the above to write a function `pretty_print` which pretty-print a matrix and
 a function `transpose` which will transpose a matrix (turn rows into columns):
 
+<!-- mdbook-xgettext: skip -->
 ```bob
            ⎛⎡1 2 3⎤⎞      ⎡1 4 7⎤
 "transpose"⎜⎢4 5 6⎥⎟  "=="⎢2 5 8⎥
@@ -78,5 +80,15 @@ implementation.
 
 The solution and the answer to the bonus section are available in the 
 [Solution](solutions-morning.md#arrays-and-for-loops) section.
+
+The use of the reference `&array` within `for n in &array` is a subtle
+preview of issues of ownership that will come later in the afternoon.
+
+Without the `&`...
+* The loop would have been one that consumes the array.  This is a
+  change [introduced in the 2021
+  Edition](https://doc.rust-lang.org/edition-guide/rust-2021/IntoIterator-for-arrays.html).
+* An implicit array copy would have occurred.  Since `i32` is a copy type, then
+  `[i32; 3]` is also a copy type.
 
 </details>

@@ -3,6 +3,60 @@
 We'd love to accept your patches and contributions to this project. There are
 just a few small guidelines you need to follow.
 
+Make sure you can build the book, and that `mdbook serve` works. Please follow
+the [instructions in the README].
+
+[instructions in the README]: README.md#building
+
+## Formatting
+
+Please ensure that your files are formatted consistently. We use a few tools for
+this:
+
+- [`dprint`] for driving the formatting.
+- [`rustfmt`] for formatting Rust code.
+- [`yapf`] for formatting Python code.
+- [`msgcat`] for formatting PO files.
+
+Run `dprint fmt` to automatically format all files.
+
+### Linux
+
+Install `dprint` using their
+[installation instructions](https://dprint.dev/install/) and install `rustfmt`
+via `rustup`.
+
+On Debian, you can install the other tools using:
+
+```sh
+sudo apt install yapf3 gettext
+```
+
+### MacOS
+
+On MacOS with [Homebrew], you can install the necessary tools with:
+
+```shell
+brew install dprint yapf gettext
+```
+
+### Windows
+
+On Windows, you can should install [Gettext tools for Windows].
+
+Install `dprint` using their
+[installation instructions](https://dprint.dev/install/) and install `rustfmt`
+via `rustup`.
+
+> _TODO: fill in how to install `yapf` on Windows._
+
+[`dprint`]: https://dprint.dev/
+[`rustfmt`]: https://github.com/rust-lang/rustfmt
+[`yapf`]: https://github.com/google/yapf
+[`msgcat`]: https://www.gnu.org/software/gettext/manual/html_node/msgcat-Invocation.html
+[Homebrew]: https://brew.sh/
+[Gettext tools for Windows]: https://github.com/vslavik/gettext-tools-windows/releases
+
 ## Contributor License Agreement
 
 Contributions to this project must be accompanied by a Contributor License
@@ -24,5 +78,5 @@ information on using pull requests.
 
 ## Community Guidelines
 
-This project follows [Google's Open Source Community
-Guidelines](https://opensource.google/conduct/).
+This project follows
+[Google's Open Source Community Guidelines](https://opensource.google/conduct/).

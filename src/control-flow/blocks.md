@@ -1,8 +1,10 @@
 # Blocks
 
-A block in Rust has a value and a type: the value is the last expression of the
-block:
+A block in Rust contains a sequence of expressions.
+Each block has a value and a type,
+which are those of the last expression of the block:
 
+<!-- mdbook-xgettext: skip -->
 ```rust,editable
 fn main() {
     let x = {
@@ -22,20 +24,21 @@ fn main() {
 }
 ```
 
+If the last expression ends with `;`, then the resulting value and type is `()`.
+
 The same rule is used for functions: the value of the function body is the
 return value:
 
+<!-- mdbook-xgettext: skip -->
 ```rust,editable
 fn double(x: i32) -> i32 {
     x + x
 }
 
 fn main() {
-    println!("doubled: {}", double(7));
+    println!("double: {}", double(7));
 }
 ```
-
-However if the last expression ends with `;`, then the resulting value and type is `()`.
 
 <details>
 

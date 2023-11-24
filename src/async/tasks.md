@@ -1,7 +1,6 @@
 # Tasks
 
-Runtimes have the concept of a "task", similar to a thread but much
-less resource-intensive.
+Rust has a task system, which is a form of lightweight threading.
 
 A task has a single top-level future which the executor polls to make progress.
 That future may have one or more nested futures that its `poll` method polls,
@@ -52,6 +51,8 @@ async fn main() -> io::Result<()> {
 
 Copy this example into your prepared `src/main.rs` and run it from there.
 
+Try connecting to it with a TCP connection tool like [nc](https://www.unix.com/man-page/linux/1/nc/) or [telnet](https://www.unix.com/man-page/linux/1/telnet/).
+
 * Ask students to visualize what the state of the example server would be with a
   few connected clients. What tasks exist? What are their Futures?
 
@@ -59,6 +60,6 @@ Copy this example into your prepared `src/main.rs` and run it from there.
   closure, but does not take any arguments. Its return value is a Future,
   similar to an `async fn`. 
 
-* Refactor the async block into a function, and improve the error handling using `?`.
+* Refactor the async block into a function, and improve the error handling using `?`. 
 
 </details>

@@ -13,7 +13,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """mdbook preprocessor which will help show the presentation aspect ratio.
 
 The preprocessor adds a large red rectangle on every page. The
@@ -21,7 +20,7 @@ rectangle has an aspect ratio of 16 to 8.5, meaning that it is
 slightly smaller than a standard 16/9 monitor.
 
 The idea is that this approximates what the course participants can
-bee at once during a class. This in turn will help you estimate when
+see at once during a class. This in turn will help you estimate when
 the slides are too large to be seen without scrolling.
 
 Enable it in book.toml.
@@ -30,6 +29,7 @@ Enable it in book.toml.
 import json
 import sys
 import textwrap
+
 
 def update_book_items(items):
     aspect_ratio_helper = textwrap.dedent("""
@@ -74,6 +74,7 @@ def update_book_items(items):
         chapter['content'] = aspect_ratio_helper + chapter['content']
         update_book_items(chapter['sub_items'])
 
+
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         if sys.argv[1] == "supports":
@@ -82,4 +83,3 @@ if __name__ == '__main__':
     context, book = json.load(sys.stdin)
     update_book_items(book['sections'])
     print(json.dumps(book))
-

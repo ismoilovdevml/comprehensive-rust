@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// ANCHOR: solution
 // ANCHOR: setup
 use futures_util::sink::SinkExt;
+use futures_util::stream::StreamExt;
 use std::error::Error;
 use std::net::SocketAddr;
 use tokio::net::{TcpListener, TcpStream};
@@ -42,9 +44,10 @@ async fn handle_connection(
             incoming = ws_stream.next() => {
                 match incoming {
                     Some(Ok(msg)) => {
-                        let msg = msg.as_text()?;
-                        println!("From client {addr:?} {msg:?}");
-                        bcast_tx.send(msg.into())?;
+                        if let Some(text) = msg.as_text() {
+                            println!("From client {addr:?} {text:?}");
+                            bcast_tx.send(text.into())?;
+                        }
                     }
                     Some(Err(err)) => return Err(err.into()),
                     None => return Ok(()),

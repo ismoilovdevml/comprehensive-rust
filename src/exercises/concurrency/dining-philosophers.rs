@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// ANCHOR: solution
 // ANCHOR: Philosopher
 use std::sync::{mpsc, Arc, Mutex};
 use std::thread;
@@ -50,7 +51,7 @@ impl Philosopher {
 }
 
 static PHILOSOPHERS: &[&str] =
-    &["Socrates", "Plato", "Aristotle", "Thales", "Pythagoras"];
+    &["Socrates", "Hypatia", "Plato", "Aristotle", "Pythagoras"];
 
 fn main() {
     // ANCHOR_END: Philosopher-eat-end
@@ -62,8 +63,8 @@ fn main() {
 
     for i in 0..forks.len() {
         let tx = tx.clone();
-        let mut left_fork = forks[i].clone();
-        let mut right_fork = forks[(i + 1) % forks.len()].clone();
+        let mut left_fork = Arc::clone(&forks[i]);
+        let mut right_fork = Arc::clone(&forks[(i + 1) % forks.len()]);
 
         // To avoid a deadlock, we have to break the symmetry
         // somewhere. This will swap the forks without deinitializing

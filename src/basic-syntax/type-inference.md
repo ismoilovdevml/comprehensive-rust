@@ -2,6 +2,7 @@
 
 Rust will look at how the variable is _used_ to determine the type:
 
+<!-- mdbook-xgettext: skip -->
 ```rust,editable
 fn takes_u32(x: u32) {
     println!("u32: {x}");
@@ -31,6 +32,7 @@ The compiler does the job for us and helps us write more concise code.
 
 The following code tells the compiler to copy into a certain generic container without the code ever explicitly specifying the contained type, using `_` as a placeholder:
 
+<!-- mdbook-xgettext: skip -->
 ```rust,editable
 fn main() {
     let mut v = Vec::new();
@@ -43,6 +45,6 @@ fn main() {
 }
 ```
 
-[`collect`](https://doc.rust-lang.org/stable/std/iter/trait.Iterator.html#method.collect) relies on `FromIterator`, which [`HashSet`](https://doc.rust-lang.org/std/iter/trait.FromIterator.html) implements.
+[`collect`](https://doc.rust-lang.org/stable/std/iter/trait.Iterator.html#method.collect) relies on [`FromIterator`](https://doc.rust-lang.org/std/iter/trait.FromIterator.html), which [`HashSet`](https://doc.rust-lang.org/std/collections/struct.HashSet.html#impl-FromIterator%3CT%3E-for-HashSet%3CT,+S%3E) implements.
 
 </details>

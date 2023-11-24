@@ -1,9 +1,17 @@
 # Day 2 Morning Exercises
 
-## Points and Polygons
+## Designing a Library
 
-([back to exercise](points-polygons.md))
+([back to exercise](book-library.md))
 
 ```rust
-{{#include points-polygons.rs}}
+{{#include book-library.rs:solution}}
+```
+
+## Health Statistics
+
+([back to exercise](health-statistics.md))
+
+```rust
+{{#include ../../../third_party/rust-on-exercism/health-statistics.rs:solution}}
 ```

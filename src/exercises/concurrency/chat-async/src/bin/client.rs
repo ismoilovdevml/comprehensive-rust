@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// ANCHOR: solution
 // ANCHOR: setup
+use futures_util::stream::StreamExt;
 use futures_util::SinkExt;
 use http::Uri;
 use tokio::io::{AsyncBufReadExt, BufReader};
@@ -20,29 +22,33 @@ use tokio_websockets::{ClientBuilder, Message};
 
 #[tokio::main]
 async fn main() -> Result<(), tokio_websockets::Error> {
-    let mut ws_stream = ClientBuilder::from_uri(Uri::from_static("ws://127.0.0.1:2000"))
-        .connect()
-        .await?;
+    let (mut ws_stream, _) =
+        ClientBuilder::from_uri(Uri::from_static("ws://127.0.0.1:2000"))
+            .connect()
+            .await?;
 
     let stdin = tokio::io::stdin();
-    let mut stdin = BufReader::new(stdin);
+    let mut stdin = BufReader::new(stdin).lines();
 
     // ANCHOR_END: setup
     // Continuous loop for concurrently sending and receiving messages.
     loop {
-        let mut line = String::new();
         tokio::select! {
             incoming = ws_stream.next() => {
                 match incoming {
-                    Some(Ok(msg)) => println!("From server: {}", msg.as_text()?),
+                    Some(Ok(msg)) => {
+                        if let Some(text) = msg.as_text() {
+                            println!("From server: {}", text);
+                        }
+                    },
                     Some(Err(err)) => return Err(err.into()),
                     None => return Ok(()),
                 }
             }
-            res = stdin.read_line(&mut line) => {
+            res = stdin.next_line() => {
                 match res {
-                    Ok(0) => return Ok(()),
-                    Ok(_) => ws_stream.send(Message::text(line.trim_end().to_string())).await?,
+                    Ok(None) => return Ok(()),
+                    Ok(Some(line)) => ws_stream.send(Message::text(line.to_string())).await?,
                     Err(err) => return Err(err.into()),
                 }
             }

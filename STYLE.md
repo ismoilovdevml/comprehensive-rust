@@ -37,11 +37,17 @@ When showing Rust code, please use the same spacing as `rustfmt`: `3 * x`
 instead of `3*x`. However, feel free to remove newlines when it can make the
 code more compact and easier to understand, e.g., you can use
 
+<!-- dprint-ignore-start -->
+
 ```rust
 struct Person { name: String }
 ```
 
-if you like.
+<!-- dprint-ignore-end -->
+
+if the `Person` struct is not important for your example. Please use this
+sparingly: enclose the code block in `<!-- dprint-ignore-start -->` and
+`<!-- dprint-ignore-end -->` to suppress warnings about the formatting.
 
 ## Speaker Notes
 
@@ -59,29 +65,44 @@ collapsed or removed entirely from the slide.
   course, instructors will only have time to glance at the notes so it is not
   useful to include full paragraphs which the instructor should read out loud.
 
+### More to Explore
+
+Move extended explanations in the notes to a "More to Explore" section:
+
+```markdown
+<details>
+
+...
+
+## More to Explore
+
+...
+
+</details>
+```
+
+The material there is outside the scope of the regular class.
+
 ## Translations
 
-This section is about what you write in the translation. We describe [how to
-create or update translations elsewhere](TRANSLATIONS.md).
+This section is about what you write in the translation. We describe
+[how to create or update translations elsewhere](TRANSLATIONS.md).
 
 When translating the course, please take the following into account:
 
-- Do not translate the course name ("Comprehensive Rust 🦀"). If the name is not
-  easily understood in your language, please add the translated version after
-  the original name.
+- Do not translate:
+  - The course name ("Comprehensive Rust 🦀"). If the name is not easily
+    understood in your language, please add the translated version after the
+    original name.
+  - Variable names (you _should_ translate the comments, though.)
 
-- If the Rust Book has been [translated into your
-  language](https://doc.rust-lang.org/book/appendix-06-translation.html), please
-  use the same vocabulary.
+- If the Rust Book has been
+  [translated into your language](https://doc.rust-lang.org/book/appendix-06-translation.html),
+  please use the same vocabulary.
 
-- Be careful to preserve the Markdown syntax of the original text. Pay special
-  attention to reference links in all their variations: `[foo][bar]`, `[foo][]`
-  (which means `[foo][foo]`), and `[foo]` (which also means `[foo][foo]`).
-
-  As an example, if you translate `[foo]`, to `[FOO]`, you must also update the
-  corresponding link definition from `[foo]: https://example.net` to `[FOO]:
-  https://example.net`. If you forget to do this, you end up with a broken link
-  in the translation.
+- The text you write is in Markdown format. Make sure to preserve the original
+  formatting in the translation by marking text as `` `code` ``, `_emphasis_`
+  and `**strong emphasis**` like in the original.
 
 - If you find mistakes or things that sound awkward in the original English
   text, please submit PRs to fix them! Fixing typos in the translation is great,

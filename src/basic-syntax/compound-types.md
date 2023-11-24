@@ -7,21 +7,23 @@
 
 Array assignment and access:
 
+<!-- mdbook-xgettext: skip -->
 ```rust,editable
 fn main() {
     let mut a: [i8; 10] = [42; 10];
     a[5] = 0;
-    println!("a: {:?}", a);
+    println!("a: {a:?}");
 }
 ```
 
 Tuple assignment and access:
 
+<!-- mdbook-xgettext: skip -->
 ```rust,editable
 fn main() {
     let t: (i8, bool) = (7, true);
-    println!("1st index: {}", t.0);
-    println!("2nd index: {}", t.1);
+    println!("t.0: {}", t.0);
+    println!("t.1: {}", t.1);
 }
 ```
 
@@ -31,16 +33,16 @@ Key points:
 
 Arrays:
 
-* Arrays have elements of the same type, `T`, and length, `N`, which is a compile-time constant.
+* A value of the array type `[T; N]` holds `N` (a compile-time constant) elements of the same type `T`.
   Note that the length of the array is *part of its type*, which means that `[u8; 3]` and
   `[u8; 4]` are considered two different types.
 
 * We can use literals to assign values to arrays.
 
-* In the main function, the print statement asks for the debug implementation with the `?` format
-  parameter: `{}` gives the default output, `{:?}` gives the debug output. We
-  could also have used `{a}` and `{a:?}` without specifying the value after the
-  format string.
+* The `println!` macro asks for the debug implementation with the `?` format
+  parameter: `{}` gives the default output, `{:?}` gives the debug output. Types such as
+  integers and strings implement the default output, but arrays only implement the debug output.
+  This means that we must use debug output here.
 
 * Adding `#`, eg `{a:#?}`, invokes a "pretty printing" format, which can be easier to read.
 

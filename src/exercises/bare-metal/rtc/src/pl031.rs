@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// ANCHOR: solution
 use core::ptr::{addr_of, addr_of_mut};
 
 #[repr(C, align(4))]
@@ -86,8 +87,8 @@ impl Rtc {
 
     /// Returns whether there is currently an interrupt pending.
     ///
-    /// This should be true iff `matched` returns true and the interrupt is
-    /// masked.
+    /// This should be true if and only if `matched` returns true and the
+    /// interrupt is masked.
     pub fn interrupt_pending(&self) -> bool {
         // Safe because we know that self.registers points to the control
         // registers of a PL031 device which is appropriately mapped.
