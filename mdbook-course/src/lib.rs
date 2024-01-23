@@ -12,4 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+pub mod course;
 pub mod frontmatter;
+pub mod markdown;
+pub mod replacements;
+pub mod timing_info;

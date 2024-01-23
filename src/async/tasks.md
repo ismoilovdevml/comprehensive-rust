@@ -13,8 +13,8 @@ use tokio::net::TcpListener;
 
 #[tokio::main]
 async fn main() -> io::Result<()> {
-    let listener = TcpListener::bind("127.0.0.1:6142").await?;
-	println!("listening on port 6142");
+    let listener = TcpListener::bind("127.0.0.1:0").await?;
+    println!("listening on port {}", listener.local_addr()?.port());
 
     loop {
         let (mut socket, addr) = listener.accept().await?;
@@ -22,26 +22,13 @@ async fn main() -> io::Result<()> {
         println!("connection from {addr:?}");
 
         tokio::spawn(async move {
-            if let Err(e) = socket.write_all(b"Who are you?\n").await {
-                println!("socket error: {e:?}");
-                return;
-            }
+            socket.write_all(b"Who are you?\n").await.expect("socket error");
 
             let mut buf = vec![0; 1024];
-            let reply = match socket.read(&mut buf).await {
-                Ok(n) => {
-                    let name = std::str::from_utf8(&buf[..n]).unwrap().trim();
-                    format!("Thanks for dialing in, {name}!\n")
-                }
-                Err(e) => {
-                    println!("socket error: {e:?}");
-                    return;
-                }
-            };
-
-            if let Err(e) = socket.write_all(reply.as_bytes()).await {
-                println!("socket error: {e:?}");
-            }
+            let name_size = socket.read(&mut buf).await.expect("socket error");
+            let name = std::str::from_utf8(&buf[..name_size]).unwrap().trim();
+            let reply = format!("Thanks for dialing in, {name}!\n");
+            socket.write_all(reply.as_bytes()).await.expect("socket error");
         });
     }
 }
@@ -51,15 +38,18 @@ async fn main() -> io::Result<()> {
 
 Copy this example into your prepared `src/main.rs` and run it from there.
 
-Try connecting to it with a TCP connection tool like [nc](https://www.unix.com/man-page/linux/1/nc/) or [telnet](https://www.unix.com/man-page/linux/1/telnet/).
+Try connecting to it with a TCP connection tool like
+[nc](https://www.unix.com/man-page/linux/1/nc/) or
+[telnet](https://www.unix.com/man-page/linux/1/telnet/).
 
-* Ask students to visualize what the state of the example server would be with a
+- Ask students to visualize what the state of the example server would be with a
   few connected clients. What tasks exist? What are their Futures?
 
-* This is the first time we've seen an `async` block. This is similar to a
+- This is the first time we've seen an `async` block. This is similar to a
   closure, but does not take any arguments. Its return value is a Future,
-  similar to an `async fn`. 
+  similar to an `async fn`.
 
-* Refactor the async block into a function, and improve the error handling using `?`. 
+- Refactor the async block into a function, and improve the error handling using
+  `?`.
 
 </details>

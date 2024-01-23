@@ -1,8 +1,9 @@
 # Interoperability with Java
 
-Java can load shared objects via [Java Native Interface
-(JNI)](https://en.wikipedia.org/wiki/Java_Native_Interface). The [`jni`
-crate](https://docs.rs/jni/) allows you to create a compatible library.
+Java can load shared objects via
+[Java Native Interface (JNI)](https://en.wikipedia.org/wiki/Java_Native_Interface).
+The [`jni` crate](https://docs.rs/jni/) allows you to create a compatible
+library.
 
 First, we create a Rust function to export to Java:
 
@@ -18,7 +19,7 @@ _interoperability/java/Android.bp_:
 {{#include java/Android.bp:libhello_jni}}
 ```
 
-Finally, we can call this function from Java:
+We then call this function from Java:
 
 _interoperability/java/HelloWorld.java_:
 

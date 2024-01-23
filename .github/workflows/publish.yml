@@ -29,10 +29,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          # We need the full history below.
-          fetch-depth: 0
+          fetch-depth: 0 # We need the full history for build.sh below.
 
       - name: Setup Rust cache
         uses: ./.github/workflows/setup-rust-cache
@@ -40,43 +39,31 @@ jobs:
       - name: Install mdbook
         uses: ./.github/workflows/install-mdbook
 
-      - name: Build course in English
-        run: mdbook build -d book
+      - name: Install mdbook-pandoc and related dependencies
+        run: |
+          cargo install mdbook-pandoc --locked --version 0.4.0
+          sudo apt-get install -y texlive texlive-luatex texlive-lang-cjk librsvg2-bin fonts-noto
+          curl -LsSf https://github.com/jgm/pandoc/releases/download/3.1.11/pandoc-3.1.11-linux-amd64.tar.gz | tar zxf -
+          echo "$PWD/pandoc-3.1.11/bin" >> $GITHUB_PATH
 
-      - name: Zip exercise templates
-        run: cd book/exerciser && zip --recurse-paths ../html/comprehensive-rust-exercises.zip comprehensive-rust-exercises/
+      - name: Build course in English
+        run: .github/workflows/build.sh en book
 
       - name: Build all translations
         run: |
           for po_lang in ${{ env.LANGUAGES }}; do
-              POT_CREATION_DATE=$(grep --max-count 1 '^"POT-Creation-Date:' po/$po_lang.po | sed -E 's/".*: (.*)\\n"/\1/')
-              if [[ $POT_CREATION_DATE == "" ]]; then
-                  POT_CREATION_DATE=now
-              fi
-              echo "::group::Building $po_lang translation as of $POT_CREATION_DATE"
-              rm -r src/
-              git restore --source "$(git rev-list -n 1 --before "$POT_CREATION_DATE" @)" src/
-
-              # Set language and adjust site URL. Clear the redirects
-              # since they are in sync with the source files, not the
-              # translation.
-              MDBOOK_BOOK__LANGUAGE=$po_lang \
-              MDBOOK_OUTPUT__HTML__SITE_URL=/comprehensive-rust/$po_lang/ \
-              MDBOOK_OUTPUT__HTML__REDIRECT='{}' \
-              mdbook build -d book/$po_lang
-              (cd book/$po_lang/exerciser && zip --recurse-paths ../html/comprehensive-rust-exercises.zip comprehensive-rust-exercises/)
+              .github/workflows/build.sh $po_lang book/$po_lang
               mv book/$po_lang/html book/html/$po_lang
-              echo "::endgroup::"
           done
 
       - name: Setup Pages
-        uses: actions/configure-pages@v2
+        uses: actions/configure-pages@v4
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: book/html
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4

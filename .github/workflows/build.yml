@@ -14,10 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install formatting dependencies
         run: |
+          sudo apt update
           sudo apt install gettext yapf3
 
       - name: Install nightly rustfmt
@@ -28,8 +29,14 @@ jobs:
       - name: Check formatting
         uses: dprint/check@v2.2
 
+  typos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Check for typos
-        uses: crate-ci/typos@v1.16.9
+        uses: crate-ci/typos@v1.17.2
         with:
           config: ./.github/typos.toml
 
@@ -42,7 +49,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Rust cache
         uses: ./.github/workflows/setup-rust-cache
@@ -70,13 +77,15 @@ jobs:
             target: aarch64-unknown-none
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Rust cache
         uses: ./.github/workflows/setup-rust-cache
 
       - name: Install dependencies
-        run: sudo apt install gcc-aarch64-linux-gnu
+        run: |
+          sudo apt update
+          sudo apt install gcc-aarch64-linux-gnu
 
       - name: Install toolchain
         run: rustup target add ${{ matrix.target }}
@@ -91,7 +100,7 @@ jobs:
       languages: ${{ steps.find-languages.outputs.languages }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Find languages
         id: find-languages
@@ -110,22 +119,25 @@ jobs:
     strategy:
       matrix:
         language: ${{ fromJSON(needs.find-languages.outputs.languages) }}
-    env:
-      MDBOOK_BOOK__LANGUAGE: ${{ matrix.language }}
+      fail-fast: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # We need the full history for build.sh below.
 
       - name: Setup Rust cache
         uses: ./.github/workflows/setup-rust-cache
 
       - name: Install Gettext
-        run: sudo apt install gettext
+        run: |
+          sudo apt update
+          sudo apt install gettext
 
       - name: Install mdbook
         uses: ./.github/workflows/install-mdbook
 
-      - name: Test ${{ matrix.language }} translation
+      - name: Test format of ${{ matrix.language }} translation
         if: matrix.language != 'en'
         run: msgfmt --statistics -o /dev/null po/${{ matrix.language }}.po
 
@@ -135,21 +147,13 @@ jobs:
           MDBOOK_OUTPUT='{"xgettext": {"pot-file": "messages.pot"}}' mdbook build -d po
           msgfmt -o /dev/null --statistics po/messages.pot
 
-      - name: Build course
-        run: mdbook build
-
-      - name: Zip exercise templates
-        run: zip --recurse-paths ../html/comprehensive-rust-exercises.zip comprehensive-rust-exercises/
-        working-directory: book/exerciser
-
-      - name: Prepare book for upload
+      - name: Build ${{ matrix.language }} translation
         run: |
-          mv book/html book/comprehensive-rust-${{ matrix.language }}
-          rm -r book/exerciser
+          .github/workflows/build.sh ${{ matrix.language }} book/comprehensive-rust-${{ matrix.language }}
 
       # Upload the book now to retain it in case mdbook test fails.
       - name: Upload book
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: comprehensive-rust-${{ matrix.language }}
           path: book/

@@ -1,6 +1,6 @@
 # Concurrency Afternoon Exercise
 
-## Dining Philosophers - Async
+## Dining Philosophers --- Async
 
 ([back to exercise](dining-philosophers-async.md))
 
@@ -23,4 +23,3 @@ _src/bin/client.rs_:
 ```rust,compile_fail
 {{#include chat-async/src/bin/client.rs:solution}}
 ```
-
